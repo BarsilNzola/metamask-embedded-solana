@@ -1,0 +1,10 @@
+{
+    "name": "Keyless ID Pass",
+    "symbol": "IDPASS",
+    "description": "Seedless identity pass minted on first login. Demo SBT semantics.",
+    "image": "/idpass.png",
+    "attributes": [
+        { "trait_type": "Type", "value": "Identity" },
+        { "trait_type": "Transferability", "value": "Non-transferable (app enforced)" }
+    ]
+}
