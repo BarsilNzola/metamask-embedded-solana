@@ -1,19 +1,35 @@
-import { Metaplex, walletAdapterIdentity } from "@metaplex-foundation/js";
+import {
+  Metaplex,
+  walletAdapterIdentity,
+  WalletAdapter,
+  Nft,
+  Sft,
+  Metadata,
+} from "@metaplex-foundation/js";
 import { Connection, PublicKey } from "@solana/web3.js";
 
 export const IDPASS_SYMBOL = "IDPASS";
 export const DEFAULT_METADATA_URI = "/idpass.json";
 
-export function makeMetaplex(connection: Connection, walletAdapter: any) {
+/**
+ * Create a Metaplex client bound to a wallet adapter
+ */
+export function makeMetaplex(connection: Connection, walletAdapter: WalletAdapter): Metaplex {
   return Metaplex.make(connection).use(walletAdapterIdentity(walletAdapter));
 }
 
+/**
+ * Check if a given owner already holds the ID Pass NFT
+ */
 export async function hasIdPass(mx: Metaplex, owner: PublicKey): Promise<boolean> {
   try {
-    console.log(`Checking for ID Pass for owner: ${owner.toString()}`);
     const nfts = await mx.nfts().findAllByOwner({ owner });
-    const hasPass = nfts.some((n: any) => (n.symbol || "").toUpperCase() === IDPASS_SYMBOL);
-    console.log(`ID Pass check result: ${hasPass}`);
+
+    const hasPass = nfts.some(
+      (n: Nft | Sft | Metadata) =>
+        (n.symbol ?? "").toUpperCase() === IDPASS_SYMBOL
+    );
+
     return hasPass;
   } catch (error) {
     console.error("Error checking for ID Pass:", error);
@@ -21,27 +37,30 @@ export async function hasIdPass(mx: Metaplex, owner: PublicKey): Promise<boolean
   }
 }
 
-export async function mintIdPass(mx: Metaplex, owner: PublicKey, metadataUri?: string): Promise<string> {
+/**
+ * Mint a new ID Pass NFT for the given owner
+ */
+export async function mintIdPass(
+  mx: Metaplex,
+  owner: PublicKey,
+  metadataUri: string = DEFAULT_METADATA_URI
+): Promise<string> {
   try {
-    console.log(`Starting ID Pass mint for owner: ${owner.toString()}`);
-    
     const { nft } = await mx.nfts().create({
-      uri: metadataUri || DEFAULT_METADATA_URI,
+      uri: metadataUri,
       name: "Keyless ID Pass",
       symbol: IDPASS_SYMBOL,
       sellerFeeBasisPoints: 0,
       isMutable: false,
       creators: [{ address: owner, share: 100 }],
     });
-    
-    console.log(`ID Pass minted successfully: ${nft.address.toString()}`);
+
     return nft.address.toString();
   } catch (error) {
     console.error("Error minting ID Pass:", error);
     if (error instanceof Error) {
       throw new Error(`Failed to mint ID Pass: ${error.message}`);
-    } else {
-      throw new Error("Failed to mint ID Pass: Unknown error occurred");
     }
+    throw new Error("Failed to mint ID Pass: Unknown error occurred");
   }
 }
