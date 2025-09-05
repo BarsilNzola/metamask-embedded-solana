@@ -4,7 +4,24 @@
     "description": "Seedless identity pass minted on first login. Demo SBT semantics.",
     "image": "/idpass.png",
     "attributes": [
-        { "trait_type": "Type", "value": "Identity" },
-        { "trait_type": "Transferability", "value": "Non-transferable (app enforced)" }
-    ]
+      { "trait_type": "Type", "value": "Identity" },
+      { "trait_type": "Transferability", "value": "Non-transferable (app enforced)" },
+      { "trait_type": "Blockchain", "value": "Solana" },
+      { "trait_type": "Authentication", "value": "Web3Auth" }
+    ],
+    "properties": {
+      "files": [
+        {
+          "uri": "/idpass.png",
+          "type": "image/png"
+        }
+      ],
+      "category": "image",
+      "creators": [
+        {
+          "address": "WALLET_ADDRESS",
+          "share": 100
+        }
+      ]
+    }
 }

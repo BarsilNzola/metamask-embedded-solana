@@ -1,7 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-html, body, :root { height: 100%; }
-body { @apply bg-gray-50 text-gray-900; }
+/* globals.css - Keep it minimal */
+html, body, :root {
+    height: 100%;
+  }
