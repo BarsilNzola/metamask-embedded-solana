@@ -6,10 +6,11 @@ import {
   VersionedTransaction,
   clusterApiUrl,
 } from "@solana/web3.js";
+import type { IProvider } from "@web3auth/base";
 
 export const DEVNET_ENDPOINT = clusterApiUrl("devnet");
 
-export function makeConnection() {
+export function makeConnection(): Connection {
   return new Connection(DEVNET_ENDPOINT, "confirmed");
 }
 
@@ -52,7 +53,7 @@ export async function buildTransferV0(
  * (provider expects base64-serialized message bytes)
  */
 export async function sendWithWeb3AuthProvider(
-  provider: any, // IProvider, but typed as any to avoid TS friction
+  provider: IProvider,
   vtx: VersionedTransaction
 ): Promise<string> {
   const bytes = vtx.serialize(); // Uint8Array
@@ -71,7 +72,7 @@ export async function sendWithWeb3AuthProvider(
  */
 export async function sendLamportsWithProvider(
   connection: Connection,
-  provider: any,
+  provider: IProvider,
   from: PublicKey,
   to: PublicKey,
   lamports: number

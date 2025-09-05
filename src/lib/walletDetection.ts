@@ -10,15 +10,17 @@ export interface SolanaWalletLite {
 const phantom: SolanaWalletLite = {
   name: "Phantom",
   icon: "https://phantom.app/img/logo.png",
-  detect: () => !!(window as any).phantom?.solana?.isPhantom,
+  detect: () =>
+    typeof window !== "undefined" &&
+    Boolean((window as Window & { phantom?: any }).phantom?.solana?.isPhantom),
   connect: async () => {
-    const p = (window as any).phantom?.solana;
+    const p = (window as Window & { phantom?: { solana?: any } }).phantom?.solana;
     if (!p) throw new Error("Phantom not installed");
     const res = await p.connect();
     return res.publicKey.toString();
   },
   disconnect: async () => {
-    const p = (window as any).phantom?.solana;
+    const p = (window as Window & { phantom?: { solana?: any } }).phantom?.solana;
     if (p?.disconnect) await p.disconnect();
   },
 };
@@ -27,9 +29,11 @@ const phantom: SolanaWalletLite = {
 const backpack: SolanaWalletLite = {
   name: "Backpack",
   icon: "https://backpack.app/images/logo.png",
-  detect: () => !!(window as any).backpack,
+  detect: () =>
+    typeof window !== "undefined" &&
+    Boolean((window as Window & { backpack?: any }).backpack),
   connect: async () => {
-    const p = (window as any).backpack;
+    const p = (window as Window & { backpack?: any }).backpack;
     if (!p) throw new Error("Backpack not installed");
     const res = await p.connect();
     return res.publicKey.toString();
@@ -40,9 +44,11 @@ const backpack: SolanaWalletLite = {
 const solflare: SolanaWalletLite = {
   name: "Solflare",
   icon: "https://solflare.com/favicon.ico",
-  detect: () => !!(window as any).solflare?.isSolflare,
+  detect: () =>
+    typeof window !== "undefined" &&
+    Boolean((window as Window & { solflare?: any }).solflare?.isSolflare),
   connect: async () => {
-    const p = (window as any).solflare;
+    const p = (window as Window & { solflare?: any }).solflare;
     if (!p) throw new Error("Solflare not installed");
     const res = await p.connect();
     return res.publicKey.toString();
