@@ -10,7 +10,6 @@ import {
 } from "@/lib/solana";
 import { makeMetaplex, hasIdPass, mintIdPass } from "@/lib/metaplex";
 import { IdentitySigner } from "@metaplex-foundation/js";
-import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { Buffer } from "buffer";
 
@@ -62,26 +61,27 @@ function Home() {
     })();
   }, [web3Auth]);
 
-  // Fetch connected address properly via SolanaWallet wrapper
+  // Fetch connected address properly
   useEffect(() => {
     (async () => {
       if (!provider) return;
       try {
-        // Wrap the base provider
-        const solanaWallet = new SolanaWallet(provider);
-  
-        // ✅ Call wrapper API
-        const accounts = await solanaWallet.requestAccounts();
+        // Most Web3Auth Solana providers expose this method:
+        const accounts = (await provider.request({
+          method: "solana_accounts",
+        })) as string[];
   
         if (accounts && accounts.length > 0) {
           setAddress(accounts[0]);
+        } else {
+          console.warn("No accounts returned from provider");
         }
       } catch (err) {
-        console.error("Failed to get Solana accounts from provider:", err);
+        console.error("Failed to get Solana accounts:", err);
       }
     })();
   }, [provider]);
-
+  
   // Refresh balance
   useEffect(() => {
     (async () => {
