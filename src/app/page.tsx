@@ -9,10 +9,18 @@ import {
   sendLamportsWithProvider,
 } from "@/lib/solana";
 import { makeMetaplex, hasIdPass, mintIdPass } from "@/lib/metaplex";
+import { IdentitySigner } from "@metaplex-foundation/js";
 
 import { Buffer } from "buffer";
-if (typeof window !== "undefined" && !(window as any).Buffer) {
-  (window as any).Buffer = Buffer;
+
+declare global {
+  interface Window {
+    Buffer?: typeof Buffer;
+  }
+}
+
+if (typeof window !== "undefined" && !window.Buffer) {
+  window.Buffer = Buffer;
 }
 
 export default function Page() {
@@ -82,12 +90,15 @@ function Home() {
 
       try {
         const ownerPk = new PublicKey(address);
-        const mx = makeMetaplex(connection, {
+
+        const identity: IdentitySigner = {
           publicKey: ownerPk,
-          // Metaplex won't use these for simple managed create, but keep stubs:
           signTransaction: async (tx: Transaction) => tx,
-          signAllTransactions: async (txs: Transaction) => txs,
-        } as any);
+          signAllTransactions: async (txs: Transaction[]) => txs,
+          signMessage: async (message: Uint8Array) => message, 
+        };
+
+        const mx = makeMetaplex(connection, identity);
 
         const already = await hasIdPass(mx, ownerPk);
         if (mounted) setHasPass(already);
@@ -110,7 +121,7 @@ function Home() {
             }
           }
         }
-      } catch (e) {
+      } catch {
         if (mounted) setMintError("Failed to check/mint ID Pass");
       } finally {
         if (mounted) setMinting(false);
@@ -140,7 +151,10 @@ function Home() {
 
   const doAirdrop = async () => {
     if (!connection || !address) return;
-    const sig = await connection.requestAirdrop(new PublicKey(address), 1_000_000); // 0.001 SOL
+    const sig = await connection.requestAirdrop(
+      new PublicKey(address),
+      1_000_000
+    ); // 0.001 SOL
     await connection.confirmTransaction(sig, "finalized");
     const bal = await getBalanceLamports(connection, address);
     setBalance(bal);
@@ -173,7 +187,9 @@ function Home() {
       setBalance(bal);
     } catch (err) {
       setMintError(
-        err instanceof Error ? `Transaction failed: ${err.message}` : "Transaction failed"
+        err instanceof Error
+          ? `Transaction failed: ${err.message}`
+          : "Transaction failed"
       );
     }
   };
@@ -219,8 +235,20 @@ function Home() {
           <div className="rounded-xl bg-white/10 border border-white/20 p-4 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">Pay a Friend</h3>
-              <span className={`text-xs px-2 py-1 rounded-full ${minting ? "bg-yellow-500/20" : hasPass ? "bg-green-500/20" : "bg-red-500/20"}`}>
-                {minting ? "Minting ID Pass…" : hasPass ? "ID Pass ✓" : "No ID Pass"}
+              <span
+                className={`text-xs px-2 py-1 rounded-full ${
+                  minting
+                    ? "bg-yellow-500/20"
+                    : hasPass
+                    ? "bg-green-500/20"
+                    : "bg-red-500/20"
+                }`}
+              >
+                {minting
+                  ? "Minting ID Pass…"
+                  : hasPass
+                  ? "ID Pass ✓"
+                  : "No ID Pass"}
               </span>
             </div>
 
