@@ -10,7 +10,6 @@ import {
 } from "@/lib/solana";
 import { makeMetaplex, hasIdPass, mintIdPass } from "@/lib/metaplex";
 import { IdentitySigner } from "@metaplex-foundation/js";
-
 import { Buffer } from "buffer";
 
 declare global {
@@ -61,31 +60,25 @@ function Home() {
     })();
   }, [web3Auth]);
 
-  // Fetch connected address properly
-  interface SolanaConnectResponse {
-    publicKey: string;
-  }
-  
+  // Fetch wallet address from Web3Auth Solana provider
   useEffect(() => {
     (async () => {
       if (!provider) return;
-  
+
       try {
-        const resp = (await provider.request({
-          method: "connect",
-        })) as SolanaConnectResponse;
-  
-        if (resp?.publicKey) {
-          setAddress(resp.publicKey.toString());
-        } else {
-          console.warn("Unexpected connect response:", resp);
+        const accountsResp = await provider.request({
+          method: "solana_accounts",
+        });
+
+        if (Array.isArray(accountsResp) && accountsResp[0]) {
+          setAddress(accountsResp[0] as string);
         }
       } catch (err) {
-        console.error("Failed to get Solana account:", err);
+        console.error("Failed to get Solana accounts:", err);
       }
     })();
   }, [provider]);
-  
+
   // Refresh balance
   useEffect(() => {
     (async () => {
@@ -95,7 +88,7 @@ function Home() {
     })();
   }, [connection, address]);
 
-  // Auto-mint ID Pass after login
+  // Auto-mint ID Pass
   useEffect(() => {
     let mounted = true;
 
@@ -109,7 +102,7 @@ function Home() {
           publicKey: ownerPk,
           signTransaction: async (tx: Transaction) => tx,
           signAllTransactions: async (txs: Transaction[]) => txs,
-          signMessage: async (message: Uint8Array) => message,
+          signMessage: async (msg: Uint8Array) => msg,
         };
 
         const mx = makeMetaplex(connection, identity);
