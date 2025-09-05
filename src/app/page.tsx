@@ -62,18 +62,21 @@ function Home() {
   }, [web3Auth]);
 
   // Fetch connected address properly
+  interface SolanaConnectResponse {
+    publicKey: string;
+  }
+  
   useEffect(() => {
     (async () => {
       if (!provider) return;
-      try {
-        // Works with Web3Auth Solana + Phantom
-        const resp = await provider.request({
-          method: "connect",
-        });
   
-        // Response is usually { publicKey: string }
-        if (resp && typeof resp === "object" && "publicKey" in resp) {
-          setAddress((resp as any).publicKey.toString());
+      try {
+        const resp = (await provider.request({
+          method: "connect",
+        })) as SolanaConnectResponse;
+  
+        if (resp?.publicKey) {
+          setAddress(resp.publicKey.toString());
         } else {
           console.warn("Unexpected connect response:", resp);
         }
