@@ -66,18 +66,19 @@ function Home() {
     (async () => {
       if (!provider) return;
       try {
-        // Most Web3Auth Solana providers expose this method:
-        const accounts = (await provider.request({
-          method: "solana_accounts",
-        })) as string[];
+        // Works with Web3Auth Solana + Phantom
+        const resp = await provider.request({
+          method: "connect",
+        });
   
-        if (accounts && accounts.length > 0) {
-          setAddress(accounts[0]);
+        // Response is usually { publicKey: string }
+        if (resp && typeof resp === "object" && "publicKey" in resp) {
+          setAddress((resp as any).publicKey.toString());
         } else {
-          console.warn("No accounts returned from provider");
+          console.warn("Unexpected connect response:", resp);
         }
       } catch (err) {
-        console.error("Failed to get Solana accounts:", err);
+        console.error("Failed to get Solana account:", err);
       }
     })();
   }, [provider]);
