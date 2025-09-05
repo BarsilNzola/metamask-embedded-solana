@@ -68,9 +68,12 @@ function Home() {
       if (!provider) return;
       try {
         const solanaWallet = new SolanaWallet(provider);
-        const pubkey = await solanaWallet.requestAccounts();
-        if (pubkey?.[0]) {
-          setAddress(pubkey[0]);
+        const pubkey = (await solanaWallet.request({
+          method: "solanaPublicKey",
+        })) as string;
+
+        if (pubkey) {
+          setAddress(pubkey);
         }
       } catch (err) {
         console.error("Failed to get Solana accounts from provider:", err);
