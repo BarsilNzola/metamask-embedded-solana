@@ -65,10 +65,15 @@ function Home() {
   useEffect(() => {
     (async () => {
       if (!provider) return;
-      const accounts = (await provider.request({
-        method: "solana_requestAccounts",
-      })) as string[];
-      if (accounts?.[0]) setAddress(accounts[0]);
+      try {
+        const accounts = (await provider.request({
+          method: "solana_accounts",
+        })) as string[];
+
+        if (accounts?.[0]) setAddress(accounts[0]);
+      } catch (err) {
+        console.error("Failed to get Solana accounts from provider:", err);
+      }
     })();
   }, [provider]);
 
@@ -95,7 +100,7 @@ function Home() {
           publicKey: ownerPk,
           signTransaction: async (tx: Transaction) => tx,
           signAllTransactions: async (txs: Transaction[]) => txs,
-          signMessage: async (message: Uint8Array) => message, 
+          signMessage: async (message: Uint8Array) => message,
         };
 
         const mx = makeMetaplex(connection, identity);
