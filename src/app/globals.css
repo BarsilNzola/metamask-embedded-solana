@@ -10,7 +10,7 @@ body,
 
 /* Glassmorphism + gradient */
 body {
-  @apply bg-gray-50 text-gray-900;
+  @apply bg-gray-2 text-gray-900;
   font-family: var(--font-inter), sans-serif;
 }
 

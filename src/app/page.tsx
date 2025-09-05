@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useWeb3Auth } from "@web3auth/modal/react";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import {
   makeConnection,
   getBalanceLamports,
@@ -85,8 +85,8 @@ function Home() {
         const mx = makeMetaplex(connection, {
           publicKey: ownerPk,
           // Metaplex won't use these for simple managed create, but keep stubs:
-          signTransaction: async (tx: any) => tx,
-          signAllTransactions: async (txs: any) => txs,
+          signTransaction: async (tx: Transaction) => tx,
+          signAllTransactions: async (txs: Transaction) => txs,
         } as any);
 
         const already = await hasIdPass(mx, ownerPk);
