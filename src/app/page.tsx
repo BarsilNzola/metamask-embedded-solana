@@ -10,6 +10,7 @@ import {
 } from "@/lib/solana";
 import { makeMetaplex, hasIdPass, mintIdPass } from "@/lib/metaplex";
 import { IdentitySigner } from "@metaplex-foundation/js";
+import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { Buffer } from "buffer";
 
@@ -61,16 +62,16 @@ function Home() {
     })();
   }, [web3Auth]);
 
-  // Fetch connected address from Web3Auth provider
+  // Fetch connected address properly via SolanaWallet wrapper
   useEffect(() => {
     (async () => {
       if (!provider) return;
       try {
-        const accounts = (await provider.request({
-          method: "solana_accounts",
-        })) as string[];
-
-        if (accounts?.[0]) setAddress(accounts[0]);
+        const solanaWallet = new SolanaWallet(provider);
+        const pubkey = await solanaWallet.requestAccounts();
+        if (pubkey?.[0]) {
+          setAddress(pubkey[0]);
+        }
       } catch (err) {
         console.error("Failed to get Solana accounts from provider:", err);
       }
@@ -237,6 +238,7 @@ function Home() {
             </div>
           </div>
 
+          {/* Pay a Friend */}
           <div className="rounded-xl bg-white/10 border border-white/20 p-4 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">Pay a Friend</h3>
