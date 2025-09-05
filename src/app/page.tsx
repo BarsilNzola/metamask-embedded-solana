@@ -67,10 +67,13 @@ function Home() {
     (async () => {
       if (!provider) return;
       try {
+        // Wrap base provider
         const solanaWallet = new SolanaWallet(provider);
-        const accounts = await solanaWallet.requestAccounts();
   
-        if (accounts.length > 0) {
+        // Correct way: get accounts
+        const accounts = await solanaWallet.request({ method: "solana_requestAccounts" }) as string[];
+  
+        if (accounts && accounts.length > 0) {
           setAddress(accounts[0]);
         }
       } catch (err) {
