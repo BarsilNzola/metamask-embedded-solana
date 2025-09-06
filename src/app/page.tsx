@@ -22,6 +22,15 @@ if (typeof window !== "undefined" && !window.Buffer) {
   window.Buffer = Buffer;
 }
 
+interface SolanaProvider {
+  requestAccounts: () => Promise<string[]>;
+  publicKey?: {
+    toBase58: () => string;
+  };
+  signTransaction: (tx: unknown) => Promise<unknown>;
+  signAllTransactions: (txs: unknown[]) => Promise<unknown[]>;
+}
+
 export default function Page() {
   return <Home />;
 }
@@ -66,11 +75,18 @@ function Home() {
       if (!provider) return;
 
       try {
-        // Web3Auth v10 exposes Solana provider with standard API
-        const solanaProvider = provider as any;
-        const accounts = await solanaProvider.requestAccounts(); // ✅ built-in now
+        const solanaProvider = provider as unknown as SolanaProvider;
+
+        // Preferred way: requestAccounts
+        const accounts = await solanaProvider.requestAccounts();
         if (accounts && accounts.length > 0) {
-          setAddress(accounts[0].toString());
+          setAddress(accounts[0]);
+          return;
+        }
+
+        // Fallback if requestAccounts is not implemented
+        if (solanaProvider.publicKey) {
+          setAddress(solanaProvider.publicKey.toBase58());
         }
       } catch (err) {
         console.error("Failed to get Solana account:", err);
@@ -78,7 +94,7 @@ function Home() {
     };
 
     getAccount();
-  }, [provider]);
+  }, [provider])
 
   // Refresh balance
   useEffect(() => {
