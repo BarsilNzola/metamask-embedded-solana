@@ -44,6 +44,9 @@ importers:
       '@web3auth/solana-provider':
         specifier: ^9.7.0
         version: 9.7.0(@babel/runtime@7.28.3)(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@web3auth/torus-solana-adapter':
+        specifier: ^9.7.0
+        version: 9.7.0(@babel/runtime@7.28.3)(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
       next:
         specifier: 15.5.2
         version: 15.5.2(@babel/core@7.28.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3196,6 +3199,12 @@ packages:
     peerDependencies:
       '@babel/runtime': 7.x
 
+  '@web3auth/base-solana-adapter@9.7.0':
+    resolution: {integrity: sha512-drhs8kqheAItY7SLXKuSE7hC2ieNOYsxDoLQWDrdJdhGP/9a/GFNHB1Xv50YvhIDsjLMEsJxqa3GpuZloGTugw==}
+    engines: {node: '>=18.x', npm: '>=9.x'}
+    peerDependencies:
+      '@babel/runtime': ^7.x
+
   '@web3auth/base@9.7.0':
     resolution: {integrity: sha512-lfKnszNhNQNP2Kwd363Hj28d5MxA7pa6zjS1sDR1XLkC0rrzd8psfNQu056y8Q7ZP9FGRGdhPyz5PVE89xtL4w==}
     engines: {node: '>=18.x', npm: '>=9.x'}
@@ -3248,6 +3257,13 @@ packages:
 
   '@web3auth/solana-provider@9.7.0':
     resolution: {integrity: sha512-IgWYwpR0sOQT1lRTSrLEiDhAONFA64ULf9L90Ui9j91K/252LweUXYN8EPMlQsA9BEgEZFwgntP2htndANCzaA==}
+    engines: {node: '>=18.x', npm: '>=9.x'}
+    peerDependencies:
+      '@babel/runtime': ^7.x
+      '@solana/web3.js': ^1.x
+
+  '@web3auth/torus-solana-adapter@9.7.0':
+    resolution: {integrity: sha512-8opkUhBZvycXte1KOafpJP30Oacxe1yjd308UybgOs8golaj8aKJGhzpCNd21SZX1fkiZacXbVD1rg9+KtoNTA==}
     engines: {node: '>=18.x', npm: '>=9.x'}
     peerDependencies:
       '@babel/runtime': ^7.x
@@ -12902,6 +12918,18 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@web3auth/base-solana-adapter@9.7.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@babel/runtime': 7.28.3
+      '@toruslabs/base-controllers': 7.4.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@web3auth/base': 9.7.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      bs58: 5.0.0
+    transitivePeerDependencies:
+      - '@sentry/types'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@web3auth/base@9.7.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@babel/runtime': 7.28.3
@@ -13079,6 +13107,23 @@ snapshots:
       - '@sentry/types'
       - bufferutil
       - supports-color
+      - utf-8-validate
+
+  '@web3auth/torus-solana-adapter@9.7.0(@babel/runtime@7.28.3)(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@babel/runtime': 7.28.3
+      '@solana/web3.js': 1.98.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
+      '@toruslabs/solana-embed': 2.1.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
+      '@web3auth/base': 9.7.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@web3auth/base-provider': 9.7.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@web3auth/base-solana-adapter': 9.7.0(@babel/runtime@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@web3auth/solana-provider': 9.7.0(@babel/runtime@7.28.3)(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - '@sentry/types'
+      - bufferutil
+      - encoding
+      - supports-color
+      - typescript
       - utf-8-validate
 
   '@web3auth/ws-embed@5.0.23(@babel/runtime@7.28.3)(@sentry/core@9.46.0)(bufferutil@4.0.9)(color@5.0.0)(utf-8-validate@5.0.10)':

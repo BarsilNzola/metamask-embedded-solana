@@ -62,21 +62,25 @@ function Home() {
 
   // Fetch wallet address from Web3Auth Solana provider
   useEffect(() => {
-    (async () => {
+    async function fetchSolanaAccount() {
       if (!provider) return;
 
       try {
-        const accountsResp = await provider.request({
+        // Use the Solana provider that Web3Auth injects
+        const solanaWallet = provider; // this acts like SolanaWallet
+        const accounts = (await solanaWallet.request({
           method: "solana_accounts",
-        });
+        })) as string[];
 
-        if (Array.isArray(accountsResp) && accountsResp[0]) {
-          setAddress(accountsResp[0] as string);
+        if (accounts && accounts.length > 0) {
+          setAddress(accounts[0]);
         }
       } catch (err) {
         console.error("Failed to get Solana accounts:", err);
       }
-    })();
+    }
+
+    fetchSolanaAccount();
   }, [provider]);
 
   // Refresh balance
