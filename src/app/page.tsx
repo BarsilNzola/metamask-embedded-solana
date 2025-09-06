@@ -27,7 +27,7 @@ export default function Page() {
 }
 
 function Home() {
-  const { web3Auth, provider, isConnected } = useWeb3Auth();
+  const { web3Auth, provider, status, isConnected } = useWeb3Auth();
 
   const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [connection, setConnection] = useState<Connection | null>(null);
@@ -62,25 +62,22 @@ function Home() {
 
   // Fetch wallet address from Web3Auth Solana provider
   useEffect(() => {
-    async function fetchSolanaAccount() {
+    const getAccount = async () => {
       if (!provider) return;
 
       try {
-        // Use the Solana provider that Web3Auth injects
-        const solanaWallet = provider; // this acts like SolanaWallet
-        const accounts = (await solanaWallet.request({
-          method: "solana_accounts",
-        })) as string[];
-
+        // Web3Auth v10 exposes Solana provider with standard API
+        const solanaProvider = provider as any;
+        const accounts = await solanaProvider.requestAccounts(); // ✅ built-in now
         if (accounts && accounts.length > 0) {
-          setAddress(accounts[0]);
+          setAddress(accounts[0].toString());
         }
       } catch (err) {
-        console.error("Failed to get Solana accounts:", err);
+        console.error("Failed to get Solana account:", err);
       }
-    }
+    };
 
-    fetchSolanaAccount();
+    getAccount();
   }, [provider]);
 
   // Refresh balance
