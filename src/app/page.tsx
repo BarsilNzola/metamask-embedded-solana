@@ -23,10 +23,9 @@ if (typeof window !== "undefined" && !window.Buffer) {
 }
 
 interface SolanaProvider {
-  requestAccounts: () => Promise<string[]>;
-  publicKey?: {
-    toBase58: () => string;
-  };
+  connect: () => Promise<{ publicKey: { toBase58: () => string } }>;
+  disconnect: () => Promise<void>;
+  publicKey?: { toBase58: () => string };
   signTransaction: (tx: unknown) => Promise<unknown>;
   signAllTransactions: (txs: unknown[]) => Promise<unknown[]>;
 }
@@ -77,16 +76,16 @@ function Home() {
       try {
         const solanaProvider = provider as unknown as SolanaProvider;
 
-        // Preferred way: requestAccounts
-        const accounts = await solanaProvider.requestAccounts();
-        if (accounts && accounts.length > 0) {
-          setAddress(accounts[0]);
+        // If already connected
+        if (solanaProvider.publicKey) {
+          setAddress(solanaProvider.publicKey.toBase58());
           return;
         }
 
-        // Fallback if requestAccounts is not implemented
-        if (solanaProvider.publicKey) {
-          setAddress(solanaProvider.publicKey.toBase58());
+        // Otherwise request connection
+        const resp = await solanaProvider.connect();
+        if (resp?.publicKey) {
+          setAddress(resp.publicKey.toBase58());
         }
       } catch (err) {
         console.error("Failed to get Solana account:", err);
@@ -94,7 +93,7 @@ function Home() {
     };
 
     getAccount();
-  }, [provider])
+  }, [provider]);
 
   // Refresh balance
   useEffect(() => {
